@@ -1,0 +1,677 @@
+{
+	"info": {
+		"_postman_id": "cunapay-admin-001",
+		"name": "CunaPay API - Administradores",
+		"description": "Colección completa de endpoints para administradores de CunaPay",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Autenticación",
+			"item": [
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    if (jsonData.token) {",
+									"        pm.collectionVariables.set(\"token\", jsonData.token);",
+									"        console.log(\"Token guardado automáticamente\");",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"admin@example.com\",\n  \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/login",
+							"host": ["{{baseUrl}}"],
+							"path": ["auth", "login"]
+						},
+						"description": "Autentica un administrador y devuelve un token JWT. El token se guarda automáticamente."
+					}
+				}
+			]
+		},
+		{
+			"name": "Usuarios",
+			"item": [
+				{
+					"name": "Listar Usuarios",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/users?page=1&pageSize=20&search=&role=",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "admin", "users"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "pageSize",
+									"value": "20"
+								},
+								{
+									"key": "search",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "role",
+									"value": "",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Obtiene todos los usuarios con paginación y filtros"
+					}
+				},
+				{
+					"name": "Buscar Usuarios",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/users/search?q=usuario@example.com&limit=50",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "admin", "users", "search"],
+							"query": [
+								{
+									"key": "q",
+									"value": "usuario@example.com"
+								},
+								{
+									"key": "limit",
+									"value": "50"
+								}
+							]
+						},
+						"description": "Busca usuarios por email (búsqueda rápida)"
+					}
+				},
+				{
+					"name": "Obtener Usuario por ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/users/:id",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "admin", "users", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "507f1f77bcf86cd799439011"
+								}
+							]
+						},
+						"description": "Obtiene un usuario específico con todos sus datos, incluyendo saldo"
+					}
+				},
+				{
+					"name": "Estadísticas de Usuarios",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/users/stats",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "admin", "users", "stats"]
+						},
+						"description": "Obtiene estadísticas generales de usuarios"
+					}
+				},
+				{
+					"name": "Transacciones de Usuario (DB)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/users/:id/transactions?source=db&limit=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "admin", "users", ":id", "transactions"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "507f1f77bcf86cd799439011"
+								}
+							],
+							"query": [
+								{
+									"key": "source",
+									"value": "db"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "status",
+									"value": "",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Obtiene todas las transacciones de base de datos de un usuario específico"
+					}
+				},
+				{
+					"name": "Transacciones de Usuario (On Chain)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/users/:id/transactions?source=onchain&limit=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "admin", "users", ":id", "transactions"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "507f1f77bcf86cd799439011"
+								}
+							],
+							"query": [
+								{
+									"key": "source",
+									"value": "onchain"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "direction",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "fingerprint",
+									"value": "",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Obtiene todas las transacciones on-chain de un usuario específico"
+					}
+				}
+			]
+		},
+		{
+			"name": "Admin Wallet",
+			"item": [
+				{
+					"name": "Obtener Wallet del Admin",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/users/me/wallet",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "admin", "users", "me", "wallet"]
+						},
+						"description": "Obtiene la wallet del admin actual"
+					}
+				},
+				{
+					"name": "Obtener Balance del Admin",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/users/me/balance",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "admin", "users", "me", "balance"]
+						},
+						"description": "Obtiene el balance del admin actual (solo TRX y USDT, sin staking)"
+					}
+				},
+				{
+					"name": "Transacciones del Admin (DB)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/users/me/transactions?source=db&limit=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "admin", "users", "me", "transactions"],
+							"query": [
+								{
+									"key": "source",
+									"value": "db"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "status",
+									"value": "",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Obtiene todas las transacciones de base de datos del admin actual"
+					}
+				},
+				{
+					"name": "Transacciones del Admin (On Chain)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/users/me/transactions?source=onchain&limit=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "admin", "users", "me", "transactions"],
+							"query": [
+								{
+									"key": "source",
+									"value": "onchain"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "direction",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "fingerprint",
+									"value": "",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Obtiene todas las transacciones on-chain del admin actual"
+					}
+				},
+				{
+					"name": "Enviar Transacción desde Admin",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"to\": \"TXYZopYRdj2D9XRtbG411XZZ3kM5VkAeBf\",\n  \"amount\": \"100.5\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/users/me/send",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "admin", "users", "me", "send"]
+						},
+						"description": "Envía USDT desde la wallet del admin a otra dirección"
+					}
+				}
+			]
+		},
+		{
+			"name": "Compras",
+			"item": [
+				{
+					"name": "Listar Todas las Compras",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/purchases?status=pending&limit=20",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "admin", "purchases"],
+							"query": [
+								{
+									"key": "status",
+									"value": "pending",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "20",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Obtiene todas las solicitudes de compra (para admin)"
+					}
+				},
+				{
+					"name": "Obtener Compra Específica",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/purchases/:id",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "admin", "purchases", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "507f1f77bcf86cd799439011"
+								}
+							]
+						},
+						"description": "Obtiene una compra específica (para admin)"
+					}
+				},
+				{
+					"name": "Aprobar Compra",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"notes\": \"Compra aprobada correctamente\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/purchases/:id/approve",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "admin", "purchases", ":id", "approve"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "507f1f77bcf86cd799439011"
+								}
+							]
+						},
+						"description": "Aprueba una compra y deposita USDT al usuario"
+					}
+				},
+				{
+					"name": "Rechazar Compra",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"reason\": \"Comprobante de pago inválido\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/purchases/:id/reject",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "admin", "purchases", ":id", "reject"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "507f1f77bcf86cd799439011"
+								}
+							]
+						},
+						"description": "Rechaza una compra"
+					}
+				},
+				{
+					"name": "Estadísticas de Compras",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/purchases/stats",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "admin", "purchases", "stats"]
+						},
+						"description": "Obtiene estadísticas de compras"
+					}
+				}
+			]
+		},
+		{
+			"name": "Noticias",
+			"item": [
+				{
+					"name": "Listar Noticias",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/news?limit=20&category=economia",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "news"],
+							"query": [
+								{
+									"key": "limit",
+									"value": "20",
+									"disabled": true
+								},
+								{
+									"key": "category",
+									"value": "economia",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Obtiene todas las noticias con filtros opcionales"
+					}
+				},
+				{
+					"name": "Crear Noticia",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Nueva noticia económica\",\n  \"category\": \"economia\",\n  \"link\": \"https://example.com/noticia\",\n  \"economicImpact\": \"positive\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/news",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "news"]
+						},
+						"description": "Crea una nueva noticia (Solo Admin)"
+					}
+				},
+				{
+					"name": "Actualizar Noticia",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Noticia actualizada\",\n  \"category\": \"economia\",\n  \"link\": \"https://example.com/noticia-actualizada\",\n  \"economicImpact\": \"negative\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/news/:id",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "news", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "507f1f77bcf86cd799439011"
+								}
+							]
+						},
+						"description": "Actualiza una noticia (Solo Admin)"
+					}
+				},
+				{
+					"name": "Eliminar Noticia",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/news/:id",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "news", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "507f1f77bcf86cd799439011"
+								}
+							]
+						},
+						"description": "Elimina una noticia (Solo Admin)"
+					}
+				},
+				{
+					"name": "Listar Categorías",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/news/categories",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "news", "categories"]
+						},
+						"description": "Obtiene todas las categorías disponibles"
+					}
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:5000",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
+

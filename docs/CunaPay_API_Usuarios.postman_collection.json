@@ -1,0 +1,599 @@
+{
+	"info": {
+		"_postman_id": "cunapay-usuarios-001",
+		"name": "CunaPay API - Usuarios",
+		"description": "Colección completa de endpoints para usuarios de CunaPay",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Autenticación",
+			"item": [
+				{
+					"name": "Registro",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    if (jsonData.token) {",
+									"        pm.collectionVariables.set(\"token\", jsonData.token);",
+									"        console.log(\"Token guardado automáticamente\");",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"usuario@example.com\",\n  \"password\": \"password123\",\n  \"firstName\": \"Juan\",\n  \"lastName\": \"Pérez\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/register",
+							"host": ["{{baseUrl}}"],
+							"path": ["auth", "register"]
+						},
+						"description": "Registra un nuevo usuario y crea automáticamente su wallet TRON"
+					}
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    if (jsonData.token) {",
+									"        pm.collectionVariables.set(\"token\", jsonData.token);",
+									"        console.log(\"Token guardado automáticamente\");",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"usuario@example.com\",\n  \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/login",
+							"host": ["{{baseUrl}}"],
+							"path": ["auth", "login"]
+						},
+						"description": "Autentica un usuario y devuelve un token JWT"
+					}
+				},
+				{
+					"name": "Cambiar Contraseña",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"currentPassword\": \"password123\",\n  \"newPassword\": \"newPassword456\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/change-password",
+							"host": ["{{baseUrl}}"],
+							"path": ["auth", "change-password"]
+						},
+						"description": "Cambia la contraseña del usuario autenticado"
+					}
+				}
+			]
+		},
+		{
+			"name": "Usuario",
+			"item": [
+				{
+					"name": "Obtener Información del Usuario",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/me",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "me"]
+						},
+						"description": "Obtiene la información del usuario autenticado"
+					}
+				}
+			]
+		},
+		{
+			"name": "Wallet",
+			"item": [
+				{
+					"name": "Obtener Wallet",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/me/wallet",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "me", "wallet"]
+						},
+						"description": "Obtiene la información de la wallet TRON del usuario"
+					}
+				},
+				{
+					"name": "Obtener Balance",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/me/balance",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "me", "balance"]
+						},
+						"description": "Obtiene el balance completo del usuario (TRX, USDT, locked en staking, disponible)"
+					}
+				},
+				{
+					"name": "Listar Transacciones (DB)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/me/transactions?source=db&limit=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "me", "transactions"],
+							"query": [
+								{
+									"key": "source",
+									"value": "db"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "status",
+									"value": "",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Lista las transacciones de la base de datos del usuario"
+					}
+				},
+				{
+					"name": "Listar Transacciones (On Chain)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/me/transactions?source=onchain&limit=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "me", "transactions"],
+							"query": [
+								{
+									"key": "source",
+									"value": "onchain"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "direction",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "fingerprint",
+									"value": "",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Lista las transacciones on-chain del usuario desde la blockchain"
+					}
+				},
+				{
+					"name": "Enviar USDT",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "Idempotency-Key",
+								"value": "{{$guid}}",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"to\": \"TXYZopYRdj2D9XRtbG411XZZ3kM5VkAeBf\",\n  \"amount\": \"100.5\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/me/send",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "me", "send"]
+						},
+						"description": "Envía USDT desde la wallet del usuario a otra dirección TRON"
+					}
+				}
+			]
+		},
+		{
+			"name": "Staking",
+			"item": [
+				{
+					"name": "Crear Stake",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"amountUsdt\": 100.0\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/me/stakes",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "me", "stakes"]
+						},
+						"description": "Crea un nuevo stake transfiriendo USDT a la wallet del admin. El porcentaje diario es 0.1% por defecto"
+					}
+				},
+				{
+					"name": "Listar Stakes",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/me/stakes",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "me", "stakes"]
+						},
+						"description": "Lista todos los stakes del usuario"
+					}
+				},
+				{
+					"name": "Cerrar Stake",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/me/stakes/:id/close",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "me", "stakes", ":id", "close"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "507f1f77bcf86cd799439011"
+								}
+							]
+						},
+						"description": "Cierra un stake y recibe principal + recompensas desde la wallet del admin"
+					}
+				}
+			]
+		},
+		{
+			"name": "Compras",
+			"item": [
+				{
+					"name": "Obtener Precio USDT",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/purchases/price",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "purchases", "price"]
+						},
+						"description": "Obtiene el precio actual de USDT en Bolivianos (BS)"
+					}
+				},
+				{
+					"name": "Crear Compra",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"amountUsdt\": 100.0\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/purchases",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "purchases"]
+						},
+						"description": "Crea una nueva solicitud de compra de USDT"
+					}
+				},
+				{
+					"name": "Mis Compras",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/purchases/me?status=pending",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "purchases", "me"],
+							"query": [
+								{
+									"key": "status",
+									"value": "pending",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Obtiene las compras del usuario actual"
+					}
+				},
+				{
+					"name": "Obtener Compra Específica",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/purchases/me/:id",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "purchases", "me", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "507f1f77bcf86cd799439011"
+								}
+							]
+						},
+						"description": "Obtiene una compra específica del usuario"
+					}
+				},
+				{
+					"name": "Obtener QR de Pago",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/purchases/qr",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "purchases", "qr"]
+						},
+						"description": "Obtiene la URL del QR para pagos"
+					}
+				}
+			]
+		},
+		{
+			"name": "Noticias",
+			"item": [
+				{
+					"name": "Listar Noticias",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/news?limit=20&category=economia",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "news"],
+							"query": [
+								{
+									"key": "limit",
+									"value": "20",
+									"disabled": true
+								},
+								{
+									"key": "category",
+									"value": "economia",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Obtiene todas las noticias con filtros opcionales"
+					}
+				},
+				{
+					"name": "Listar Categorías",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/news/categories",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "news", "categories"]
+						},
+						"description": "Obtiene todas las categorías disponibles"
+					}
+				}
+			]
+		},
+		{
+			"name": "Binance P2P",
+			"item": [
+				{
+					"name": "Precio Promedio Compra USDT",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/p2p/usdt/buy/avg?asset=USDT&fiat=BOB&rows=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "p2p", "usdt", "buy", "avg"],
+							"query": [
+								{
+									"key": "asset",
+									"value": "USDT"
+								},
+								{
+									"key": "fiat",
+									"value": "BOB"
+								},
+								{
+									"key": "rows",
+									"value": "10"
+								}
+							]
+						},
+						"description": "Obtiene el precio promedio de compra de USDT en Binance P2P"
+					}
+				},
+				{
+					"name": "Precio Promedio Venta USDT",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/p2p/usdt/sell/avg?asset=USDT&fiat=BOB&rows=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "p2p", "usdt", "sell", "avg"],
+							"query": [
+								{
+									"key": "asset",
+									"value": "USDT"
+								},
+								{
+									"key": "fiat",
+									"value": "BOB"
+								},
+								{
+									"key": "rows",
+									"value": "10"
+								}
+							]
+						},
+						"description": "Obtiene el precio promedio de venta de USDT en Binance P2P"
+					}
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:5000",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
+
