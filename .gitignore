@@ -45,6 +45,13 @@ artifacts/
 
 # Environment variables
 .env
+.env.local
+.env.*.local
 appsettings.Production.json
 appsettings.Local.json
+
+# Keys and secrets (nunca subir)
+*.key
+*.pem
+secrets/
 

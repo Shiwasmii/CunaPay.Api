@@ -160,6 +160,12 @@ app.MapGet("/", () => new
     env = app.Environment.EnvironmentName
 });
 
-var port = builder.Configuration.GetValue<int>("Port", 4000);
+// Obtener el puerto de la variable de entorno PORT (Render lo proporciona automáticamente)
+// Si no existe, usar el puerto de configuración o 4000 por defecto
+var port = Environment.GetEnvironmentVariable("PORT");
+if (string.IsNullOrEmpty(port))
+{
+    port = builder.Configuration.GetValue<string>("Port", "4000");
+}
 app.Run($"http://0.0.0.0:{port}");
 

@@ -1,0 +1,51 @@
+# Archivos de build
+bin/
+obj/
+[Dd]ebug/
+[Rr]elease/
+*.dll
+*.pdb
+*.exe
+
+# Archivos de Visual Studio
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+*.sln.docstates
+
+# Archivos de configuración local
+appsettings.Development.json
+appsettings.Local.json
+appsettings.Production.json
+.env
+
+# Archivos de logs
+logs/
+*.log
+
+# Archivos temporales
+*.tmp
+*.cache
+*.swp
+*.swo
+*~
+
+# Git
+.git/
+.gitignore
+
+# Docker
+Dockerfile
+.dockerignore
+docker-compose.yml
+
+# Documentación
+README.md
+docs/
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+
