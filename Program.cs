@@ -28,6 +28,10 @@ builder.Services.AddHttpClient("default")
     .ConfigurePrimaryHttpMessageHandler(() => new System.Net.Http.HttpClientHandler()
     {
         AutomaticDecompression = System.Net.DecompressionMethods.All
+    })
+    .ConfigureHttpClient(client =>
+    {
+        client.Timeout = TimeSpan.FromSeconds(30);
     });
 
 // TronNet Configuration
