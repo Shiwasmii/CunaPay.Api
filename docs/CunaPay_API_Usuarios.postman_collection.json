@@ -586,7 +586,7 @@
 	"variable": [
 		{
 			"key": "baseUrl",
-			"value": "http://localhost:5000",
+			"value": "https://cunapay-api.onrender.com",
 			"type": "string"
 		},
 		{

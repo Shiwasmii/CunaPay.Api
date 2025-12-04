@@ -38,7 +38,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"email\": \"admin@example.com\",\n  \"password\": \"password123\"\n}"
+							"raw": "{\n  \"email\": \"admin@gmail.com\",\n  \"password\": \"password123\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/auth/login",
@@ -46,6 +46,32 @@
 							"path": ["auth", "login"]
 						},
 						"description": "Autentica un administrador y devuelve un token JWT. El token se guarda automáticamente."
+					}
+				},
+				{
+					"name": "Cambiar Contraseña",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"currentPassword\": \"password123\",\n  \"newPassword\": \"newPassword456\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/change-password",
+							"host": ["{{baseUrl}}"],
+							"path": ["auth", "change-password"]
+						},
+						"description": "Cambia la contraseña del usuario autenticado"
 					}
 				}
 			]
@@ -140,7 +166,7 @@
 								}
 							]
 						},
-						"description": "Obtiene un usuario específico con todos sus datos, incluyendo saldo"
+						"description": "Obtiene un usuario específico con todos sus datos, incluyendo wallet, balance y estadísticas"
 					}
 				},
 				{
@@ -158,7 +184,7 @@
 							"host": ["{{baseUrl}}"],
 							"path": ["api", "admin", "users", "stats"]
 						},
-						"description": "Obtiene estadísticas generales de usuarios"
+						"description": "Obtiene estadísticas generales de usuarios (total, admins, usuarios normales)"
 					}
 				},
 				{
@@ -172,7 +198,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{baseUrl}}/api/admin/users/:id/transactions?source=db&limit=10",
+							"raw": "{{baseUrl}}/api/admin/users/:id/transactions?source=db&limit=10&status=",
 							"host": ["{{baseUrl}}"],
 							"path": ["api", "admin", "users", ":id", "transactions"],
 							"variable": [
@@ -211,7 +237,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{baseUrl}}/api/admin/users/:id/transactions?source=onchain&limit=10",
+							"raw": "{{baseUrl}}/api/admin/users/:id/transactions?source=onchain&limit=10&direction=&fingerprint=",
 							"host": ["{{baseUrl}}"],
 							"path": ["api", "admin", "users", ":id", "transactions"],
 							"variable": [
@@ -296,7 +322,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{baseUrl}}/api/admin/users/me/transactions?source=db&limit=10",
+							"raw": "{{baseUrl}}/api/admin/users/me/transactions?source=db&limit=10&status=",
 							"host": ["{{baseUrl}}"],
 							"path": ["api", "admin", "users", "me", "transactions"],
 							"query": [
@@ -329,7 +355,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{baseUrl}}/api/admin/users/me/transactions?source=onchain&limit=10",
+							"raw": "{{baseUrl}}/api/admin/users/me/transactions?source=onchain&limit=10&direction=&fingerprint=",
 							"host": ["{{baseUrl}}"],
 							"path": ["api", "admin", "users", "me", "transactions"],
 							"query": [
@@ -398,19 +424,21 @@
 							}
 						],
 						"url": {
-							"raw": "{{baseUrl}}/api/admin/purchases?status=pending&limit=20",
+							"raw": "{{baseUrl}}/api/admin/purchases?status=&limit=",
 							"host": ["{{baseUrl}}"],
 							"path": ["api", "admin", "purchases"],
 							"query": [
 								{
 									"key": "status",
-									"value": "pending",
-									"disabled": true
+									"value": "",
+									"disabled": true,
+									"description": "Filtrar por estado: pending, accepted, rejected"
 								},
 								{
 									"key": "limit",
-									"value": "20",
-									"disabled": true
+									"value": "",
+									"disabled": true,
+									"description": "Límite de resultados"
 								}
 							]
 						},
@@ -470,7 +498,7 @@
 								}
 							]
 						},
-						"description": "Aprueba una compra y deposita USDT al usuario"
+						"description": "Aprueba una compra y deposita USDT al usuario desde la wallet del admin"
 					}
 				},
 				{
@@ -520,7 +548,150 @@
 							"host": ["{{baseUrl}}"],
 							"path": ["api", "admin", "purchases", "stats"]
 						},
-						"description": "Obtiene estadísticas de compras"
+						"description": "Obtiene estadísticas de compras (total, pending, accepted, rejected, totalUsdt, totalBs)"
+					}
+				}
+			]
+		},
+		{
+			"name": "Retiros",
+			"item": [
+				{
+					"name": "Listar Todos los Retiros",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/withdrawals?status=&limit=",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "admin", "withdrawals"],
+							"query": [
+								{
+									"key": "status",
+									"value": "",
+									"disabled": true,
+									"description": "Filtrar por estado: pending, completed, rejected"
+								},
+								{
+									"key": "limit",
+									"value": "",
+									"disabled": true,
+									"description": "Límite de resultados"
+								}
+							]
+						},
+						"description": "Obtiene todas las solicitudes de retiro (para admin)"
+					}
+				},
+				{
+					"name": "Obtener Retiro Específico",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/withdrawals/:id",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "admin", "withdrawals", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "507f1f77bcf86cd799439011"
+								}
+							]
+						},
+						"description": "Obtiene un retiro específico (para admin)"
+					}
+				},
+				{
+					"name": "Aprobar Retiro",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"notes\": \"Retiro aprobado correctamente\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/withdrawals/:id/approve",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "admin", "withdrawals", ":id", "approve"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "507f1f77bcf86cd799439011"
+								}
+							]
+						},
+						"description": "Aprueba un retiro y transfiere USDT del usuario al admin"
+					}
+				},
+				{
+					"name": "Rechazar Retiro",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"reason\": \"Información bancaria incorrecta\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/withdrawals/:id/reject",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "admin", "withdrawals", ":id", "reject"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "507f1f77bcf86cd799439011"
+								}
+							]
+						},
+						"description": "Rechaza un retiro"
+					}
+				},
+				{
+					"name": "Estadísticas de Retiros",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/withdrawals/stats",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "admin", "withdrawals", "stats"]
+						},
+						"description": "Obtiene estadísticas de retiros (total, pending, completed, rejected, totalUsdt, totalBs)"
 					}
 				}
 			]
@@ -539,19 +710,21 @@
 							}
 						],
 						"url": {
-							"raw": "{{baseUrl}}/api/news?limit=20&category=economia",
+							"raw": "{{baseUrl}}/api/news?limit=&category=",
 							"host": ["{{baseUrl}}"],
 							"path": ["api", "news"],
 							"query": [
 								{
 									"key": "limit",
-									"value": "20",
-									"disabled": true
+									"value": "",
+									"disabled": true,
+									"description": "Límite de resultados"
 								},
 								{
 									"key": "category",
-									"value": "economia",
-									"disabled": true
+									"value": "",
+									"disabled": true,
+									"description": "Filtrar por categoría"
 								}
 							]
 						},
@@ -659,12 +832,81 @@
 					}
 				}
 			]
+		},
+		{
+			"name": "Binance P2P",
+			"item": [
+				{
+					"name": "Precio Promedio Compra USDT",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/p2p/usdt/buy/avg?asset=USDT&fiat=BOB&rows=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "p2p", "usdt", "buy", "avg"],
+							"query": [
+								{
+									"key": "asset",
+									"value": "USDT"
+								},
+								{
+									"key": "fiat",
+									"value": "BOB"
+								},
+								{
+									"key": "rows",
+									"value": "10"
+								}
+							]
+						},
+						"description": "Obtiene el precio promedio de compra de USDT en Binance P2P (últimos 10 precios)"
+					}
+				},
+				{
+					"name": "Precio Promedio Venta USDT",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/p2p/usdt/sell/avg?asset=USDT&fiat=BOB&rows=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "p2p", "usdt", "sell", "avg"],
+							"query": [
+								{
+									"key": "asset",
+									"value": "USDT"
+								},
+								{
+									"key": "fiat",
+									"value": "BOB"
+								},
+								{
+									"key": "rows",
+									"value": "10"
+								}
+							]
+						},
+						"description": "Obtiene el precio promedio de venta de USDT en Binance P2P (últimos 10 precios)"
+					}
+				}
+			]
 		}
 	],
 	"variable": [
 		{
 			"key": "baseUrl",
-			"value": "http://localhost:5000",
+			"value": "https://cunapay-api.onrender.com",
 			"type": "string"
 		},
 		{
@@ -674,4 +916,3 @@
 		}
 	]
 }
-

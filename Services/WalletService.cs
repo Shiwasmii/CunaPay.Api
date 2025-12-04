@@ -52,7 +52,7 @@ namespace CunaPay.Api.Services
                 throw new KeyNotFoundException("Wallet not found");
 
             var trx = await _tronService.GetTrxBalanceAsync(wallet.Address);
-            var usdt = await _tronService.GetUsdtBalanceAsync(wallet.Address);
+            var usdtOnChain = await _tronService.GetUsdtBalanceAsync(wallet.Address);
 
             // Calcular USDT bloqueado en staking activo
             var activeStakes = await _db.Stakes
@@ -60,16 +60,20 @@ namespace CunaPay.Api.Services
                 .ToListAsync();
 
             var locked = activeStakes.Sum(s => s.PrincipalUsdt);
-            var available = Math.Max(0, usdt - locked);
+            
+            // El balance total incluye lo que está en staking (porque el dinero está en la wallet del admin)
+            // El available es solo lo que está realmente en la wallet del usuario (on-chain)
+            var usdtTotal = usdtOnChain + locked;
+            var available = usdtOnChain; // Lo que realmente tiene disponible en su wallet
 
             return new BalanceDto
             {
                 WalletId = wallet.Id,
                 Address = wallet.Address,
                 Trx = trx,
-                Usdt = usdt,
+                Usdt = usdtTotal, // Balance total (on-chain + staking)
                 LockedInStaking = locked,
-                Available = available
+                Available = available // Solo el balance on-chain (lo realmente disponible)
             };
         }
 
