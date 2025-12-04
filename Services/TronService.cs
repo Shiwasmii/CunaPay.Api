@@ -18,7 +18,7 @@ namespace CunaPay.Api.Services
             _config = config;
             _logger = logger;
 
-            _tronApi = _config["Tron:ApiUrl"] ?? "http://127.0.0.1:5050";
+            _tronApi = _config["Tron:ApiUrl"] ?? "https://tron-api.onrender.com";
             _accessToken = _config["Tron:AccessToken"] ?? "";
 
             if (!string.IsNullOrWhiteSpace(_accessToken))
