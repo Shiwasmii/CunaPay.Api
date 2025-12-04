@@ -69,24 +69,38 @@ public class BinanceService
                 if (item.TryGetProperty("adv", out var advElement) &&
                     advElement.TryGetProperty("price", out var priceElement))
                 {
-                    if (double.TryParse(priceElement.GetString(), out var price))
+                    var priceString = priceElement.GetString();
+                    if (!string.IsNullOrEmpty(priceString) && 
+                        double.TryParse(priceString, System.Globalization.NumberStyles.Any, 
+                        System.Globalization.CultureInfo.InvariantCulture, out var price))
                     {
                         prices.Add(price);
+                        _logger.LogDebug("Precio BUY encontrado: {Price}", price);
+                    }
+                    else
+                    {
+                        _logger.LogWarning("No se pudo parsear el precio BUY: {PriceString}", priceString);
                     }
                 }
             }
 
             if (prices.Count == 0)
             {
+                _logger.LogError("No se encontraron precios válidos en la respuesta de Binance (BUY)");
                 return (false, null, "No se encontraron precios en la respuesta");
             }
 
-            var average = prices.Average() / 100.0; // Binance devuelve el precio en centavos, dividir por 100
+            var average = prices.Average();
+            _logger.LogInformation("Precios BUY obtenidos de Binance: {Count} precios, Promedio: {Average}", 
+                prices.Count, average);
+            
+            // Binance P2P devuelve el precio directamente (ej: 9.69 BOB), NO en centavos
+            // NO dividir por 100
             return (true, average, null);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error al obtener promedio de Binance P2P");
+            _logger.LogError(ex, "Error al obtener promedio de Binance P2P (BUY)");
             return (false, null, $"Error: {ex.Message}");
         }
     }
@@ -143,24 +157,38 @@ public class BinanceService
                 if (item.TryGetProperty("adv", out var advElement) &&
                     advElement.TryGetProperty("price", out var priceElement))
                 {
-                    if (double.TryParse(priceElement.GetString(), out var price))
+                    var priceString = priceElement.GetString();
+                    if (!string.IsNullOrEmpty(priceString) && 
+                        double.TryParse(priceString, System.Globalization.NumberStyles.Any, 
+                        System.Globalization.CultureInfo.InvariantCulture, out var price))
                     {
                         prices.Add(price);
+                        _logger.LogDebug("Precio SELL encontrado: {Price}", price);
+                    }
+                    else
+                    {
+                        _logger.LogWarning("No se pudo parsear el precio SELL: {PriceString}", priceString);
                     }
                 }
             }
 
             if (prices.Count == 0)
             {
+                _logger.LogError("No se encontraron precios válidos en la respuesta de Binance (SELL)");
                 return (false, null, "No se encontraron precios en la respuesta");
             }
 
-            var average = prices.Average() / 100.0; // Binance devuelve el precio en centavos, dividir por 100
+            var average = prices.Average();
+            _logger.LogInformation("Precios SELL obtenidos de Binance: {Count} precios, Promedio: {Average}", 
+                prices.Count, average);
+            
+            // Binance P2P devuelve el precio directamente (ej: 9.69 BOB), NO en centavos
+            // NO dividir por 100
             return (true, average, null);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error al obtener promedio de Binance P2P");
+            _logger.LogError(ex, "Error al obtener promedio de Binance P2P (SELL)");
             return (false, null, $"Error: {ex.Message}");
         }
     }
